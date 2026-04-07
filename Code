@@ -1,0 +1,406 @@
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+interface Displayable {
+    void displayInfo();
+}
+
+abstract class Person implements Displayable {
+    protected int id;
+    protected String name;
+    protected String email;
+    protected String phone;
+
+    public Person(int id, String name, String email, String phone) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public int getId()       { return id; }
+    public String getName()  { return name; }
+    public String getEmail() { return email; }
+    public String getPhone() { return phone; }
+}
+class Guest extends Person {
+    private String nationality;
+    private int loyaltyPoints;
+
+    public Guest(int id, String name, String email, String phone, String nationality) {
+        super(id, name, email, phone);
+        this.nationality = nationality;
+        this.loyaltyPoints = 0;
+    }
+
+    public String getNationality()   { return nationality; }
+    public int getLoyaltyPoints()    { return loyaltyPoints; }
+
+    public void addLoyaltyPoints(int points) {
+        this.loyaltyPoints += points;
+        System.out.println("  " + points + " loyalty points added to " + name + ". Total: " + loyaltyPoints);
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- Guest Info ---");
+        System.out.println("ID          : " + id);
+        System.out.println("Name        : " + name);
+        System.out.println("Email       : " + email);
+        System.out.println("Phone       : " + phone);
+        System.out.println("Nationality : " + nationality);
+        System.out.println("Loyalty Pts : " + loyaltyPoints);
+    }
+}
+class Staff extends Person {
+    private String role;
+    private double salary;
+
+    public Staff(int id, String name, String email, String phone, String role, double salary) {
+        super(id, name, email, phone);
+        this.role = role;
+        this.salary = salary;
+    }
+
+    public String getRole()    { return role; }
+    public double getSalary()  { return salary; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- Staff Info ---");
+        System.out.println("ID     : " + id);
+        System.out.println("Name   : " + name);
+        System.out.println("Email  : " + email);
+        System.out.println("Phone  : " + phone);
+        System.out.println("Role   : " + role);
+        System.out.println("Salary : $" + salary);
+    }
+}
+abstract class Room implements Displayable {
+    protected int roomNumber;
+    protected boolean isAvailable;
+
+    public Room(int roomNumber) {
+        this.roomNumber = roomNumber;
+        this.isAvailable = true;
+    }
+
+    public int getRoomNumber()      { return roomNumber; }
+    public boolean isAvailable()    { return isAvailable; }
+    public void setAvailable(boolean status) { this.isAvailable = status; }
+
+    public abstract double getPricePerNight();
+}
+class StandardRoom extends Room {
+    public StandardRoom(int roomNumber) {
+        super(roomNumber);
+    }
+
+    @Override
+    public double getPricePerNight() { return 80.0; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- Room Info ---");
+        System.out.println("Room Number : " + roomNumber);
+        System.out.println("Type        : Standard Room");
+        System.out.println("Price/Night : $80.0");
+        System.out.println("Available   : " + isAvailable);
+    }
+}
+
+class DeluxeRoom extends Room {
+    public DeluxeRoom(int roomNumber) {
+        super(roomNumber);
+    }
+
+    @Override
+    public double getPricePerNight() { return 150.0; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- Room Info ---");
+        System.out.println("Room Number : " + roomNumber);
+        System.out.println("Type        : Deluxe Room");
+        System.out.println("Price/Night : $150.0");
+        System.out.println("Available   : " + isAvailable);
+    }
+}
+
+class Suite extends Room {
+    public Suite(int roomNumber) {
+        super(roomNumber);
+    }
+
+    @Override
+    public double getPricePerNight() { return 300.0; }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- Room Info ---");
+        System.out.println("Room Number : " + roomNumber);
+        System.out.println("Type        : Suite");
+        System.out.println("Price/Night : $300.0");
+        System.out.println("Available   : " + isAvailable);
+    }
+}
+class Booking {
+    private static int bookingCounter = 1;
+    private int bookingId;
+    private Guest guest;
+    private Room room;
+    private LocalDate checkIn;
+    private LocalDate checkOut;
+    private double totalBill;
+
+    public Booking(Guest guest, Room room, LocalDate checkIn, LocalDate checkOut) {
+        this.bookingId = bookingCounter++;
+        this.guest = guest;
+        this.room = room;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
+        this.totalBill = nights * room.getPricePerNight();
+    }
+
+    public int getBookingId()   { return bookingId; }
+    public Guest getGuest()     { return guest; }
+    public Room getRoom()       { return room; }
+    public LocalDate getCheckIn()  { return checkIn; }
+    public LocalDate getCheckOut() { return checkOut; }
+    public double getTotalBill()   { return totalBill; }
+
+    public void displayInfo() {
+        System.out.println("--- Booking Info ---");
+        System.out.println("Booking ID  : " + bookingId);
+        System.out.println("Guest       : " + guest.getName());
+        System.out.println("Room        : " + room.getRoomNumber());
+        System.out.println("Check In    : " + checkIn);
+        System.out.println("Check Out   : " + checkOut);
+        System.out.println("Total Bill  : $" + totalBill);
+    }
+}
+class HotelManager {
+    private List<Guest> guests = new ArrayList<>();
+    private List<Room> rooms = new ArrayList<>();
+    private List<Staff> staff = new ArrayList<>();
+    private List<Booking> bookings = new ArrayList<>();
+
+    // Add guest
+    public void addGuest(Guest guest) {
+        guests.add(guest);
+        System.out.println("Guest " + guest.getName() + " added successfully!");
+    }
+
+    // Add room
+    public void addRoom(Room room) {
+        rooms.add(room);
+        System.out.println("Room " + room.getRoomNumber() + " added successfully!");
+    }
+
+    // Add staff
+    public void addStaff(Staff member) {
+        staff.add(member);
+        System.out.println("Staff " + member.getName() + " added successfully!");
+    }
+
+    // Make a booking
+    public void makeBooking(int guestId, int roomNumber, LocalDate checkIn, LocalDate checkOut) {
+        Guest guest = null;
+        Room room = null;
+
+        for (Guest g : guests) {
+            if (g.getId() == guestId) { guest = g; break; }
+        }
+        for (Room r : rooms) {
+            if (r.getRoomNumber() == roomNumber && r.isAvailable()) { room = r; break; }
+        }
+
+        if (guest == null) { System.out.println("Guest not found!"); return; }
+        if (room == null)  { System.out.println("Room not available!"); return; }
+
+        Booking booking = new Booking(guest, room, checkIn, checkOut);
+        bookings.add(booking);
+        room.setAvailable(false);
+        guest.addLoyaltyPoints(10);
+        System.out.println("Booking confirmed! Bill: $" + booking.getTotalBill());
+    }
+
+    // Checkout
+    public void checkOut(int bookingId) {
+        for (Booking b : bookings) {
+            if (b.getBookingId() == bookingId) {
+                b.getRoom().setAvailable(true);
+                System.out.println("Guest " + b.getGuest().getName() + " checked out. Total paid: $" + b.getTotalBill());
+                return;
+            }
+        }
+        System.out.println("Booking not found!");
+    }
+
+    // Display all guests
+    public void displayAllGuests() {
+        if (guests.isEmpty()) { System.out.println("No guests found."); return; }
+        for (Guest g : guests) { g.displayInfo(); System.out.println(); }
+    }
+
+    // Display all rooms
+    public void displayAllRooms() {
+        if (rooms.isEmpty()) { System.out.println("No rooms found."); return; }
+        for (Room r : rooms) { r.displayInfo(); System.out.println(); }
+    }
+
+    // Display all bookings
+    public void displayAllBookings() {
+        if (bookings.isEmpty()) { System.out.println("No bookings found."); return; }
+        for (Booking b : bookings) { b.displayInfo(); System.out.println(); }
+    }
+
+    // Display all staff
+    public void displayAllStaff() {
+        if (staff.isEmpty()) { System.out.println("No staff found."); return; }
+        for (Staff s : staff) { s.displayInfo(); System.out.println(); }
+    }
+    public List<Guest> getGuests()     { return guests; }
+    public List<Booking> getBookings() { return bookings; }
+}
+class FileHandler {
+    private static final String GUESTS_FILE = "guests.txt";
+    private static final String BOOKINGS_FILE = "bookings.txt";
+
+    // Save all guests to file
+    public static void saveGuests(List<Guest> guests) {
+        try {
+            java.io.FileWriter writer = new java.io.FileWriter(GUESTS_FILE);
+            for (Guest g : guests) {
+                writer.write(g.getId() + "," + g.getName() + "," + g.getEmail() + "," + g.getPhone() + "," + g.getNationality() + "," + g.getLoyaltyPoints() + "\n");
+            }
+            writer.close();
+            System.out.println("Guests saved successfully!");
+        } catch (Exception e) {
+            System.out.println("Error saving guests: " + e.getMessage());
+        }
+    }
+
+    // Load guests from file
+    public static List<Guest> loadGuests() {
+        List<Guest> guests = new ArrayList<>();
+        try {
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(GUESTS_FILE));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                Guest g = new Guest(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3], parts[4]);
+                guests.add(g);
+            }
+            reader.close();
+            System.out.println("Guests loaded successfully!");
+        } catch (Exception e) {
+            System.out.println("No saved guests found.");
+        }
+        return guests;
+    }
+
+    // Save all bookings to file
+    public static void saveBookings(List<Booking> bookings) {
+        try {
+            java.io.FileWriter writer = new java.io.FileWriter(BOOKINGS_FILE);
+            for (Booking b : bookings) {
+                writer.write(b.getBookingId() + "," + b.getGuest().getName() + "," + b.getRoom().getRoomNumber() + "," + b.getCheckIn() + "," + b.getCheckOut() + "," + b.getTotalBill() + "\n");
+            }
+            writer.close();
+            System.out.println("Bookings saved successfully!");
+        } catch (Exception e) {
+            System.out.println("Error saving bookings: " + e.getMessage());
+        }
+    }
+}
+class Main {
+    static HotelManager manager = new HotelManager();
+    static java.util.Scanner scanner = new java.util.Scanner(System.in);
+
+    public static void main(String[] args) {
+        // Add some rooms by default
+        manager.addRoom(new StandardRoom(101));
+        manager.addRoom(new StandardRoom(102));
+        manager.addRoom(new DeluxeRoom(201));
+        manager.addRoom(new DeluxeRoom(202));
+        manager.addRoom(new Suite(301));
+
+        // Add some staff by default
+        manager.addStaff(new Staff(1, "Alice", "alice@hotel.com", "123456", "Manager", 5000));
+        manager.addStaff(new Staff(2, "Bob", "bob@hotel.com", "789012", "Receptionist", 3000));
+
+        int choice;
+        do {
+            System.out.println("\n=============================");
+            System.out.println("   HOTEL MANAGEMENT SYSTEM   ");
+            System.out.println("=============================");
+            System.out.println("1. Add Guest");
+            System.out.println("2. Make Booking");
+            System.out.println("3. Check Out");
+            System.out.println("4. Display All Guests");
+            System.out.println("5. Display All Rooms");
+            System.out.println("6. Display All Bookings");
+            System.out.println("7. Display All Staff");
+            System.out.println("8. Save Data");
+            System.out.println("0. Exit");
+            System.out.print("Your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1 -> addGuest();
+                case 2 -> makeBooking();
+                case 3 -> checkOut();
+                case 4 -> manager.displayAllGuests();
+                case 5 -> manager.displayAllRooms();
+                case 6 -> manager.displayAllBookings();
+                case 7 -> manager.displayAllStaff();
+                case 8 -> {
+                    FileHandler.saveGuests(manager.getGuests());
+                    FileHandler.saveBookings(manager.getBookings());
+                }
+                case 0 -> System.out.println("Goodbye!");
+                default -> System.out.println("Invalid choice!");
+            }
+        } while (choice != 0);
+    }
+
+    static void addGuest() {
+        System.out.print("Enter guest ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter phone: ");
+        String phone = scanner.nextLine();
+        System.out.print("Enter nationality: ");
+        String nationality = scanner.nextLine();
+        manager.addGuest(new Guest(id, name, email, phone, nationality));
+    }
+
+    static void makeBooking() {
+        System.out.print("Enter guest ID: ");
+        int guestId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter room number: ");
+        int roomNumber = scanner.nextInt();
+        scanner.nextLine();
+        System.out.print("Enter check-in date (YYYY-MM-DD): ");
+        LocalDate checkIn = LocalDate.parse(scanner.nextLine());
+        System.out.print("Enter check-out date (YYYY-MM-DD): ");
+        LocalDate checkOut = LocalDate.parse(scanner.nextLine());
+        manager.makeBooking(guestId, roomNumber, checkIn, checkOut);
+    }
+
+    static void checkOut() {
+        System.out.print("Enter booking ID: ");
+        int bookingId = scanner.nextInt();
+        scanner.nextLine();
+        manager.checkOut(bookingId);
+    }
+}
