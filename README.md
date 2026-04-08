@@ -1,26 +1,17 @@
-##Description
+Hotel Management System
 
-This project works like a basic hotel system. It lets you handle things like guests, rooms, staff, and bookings using an easy menu. All the information is saved in text files, so your data is still there when you reopen the program.
+A console-based Java application for managing hotel operations, developed for the B202 Advanced Programming module.
 
-##Features
-Add and manage guest details
-Three types of rooms:
-1.Standard Room ($80 per night)
-2.Deluxe Room ($150 per night)
-3.Suite ($300 per night)
-Book rooms and automatically calculate the total cost
-Loyalty points for guests
-Manage staff information
-Checkout system for guests
-Save and load all data from files
-##OOP Concepts Used
-Interface: Displayable
-Abstract Classes: Person, Room
-Inheritance: Guest,Staff,StandardRoom,DeluxeRoom,Suite
-Encapsulation: using private fields with getters
-Polymorphism: Display Info () works differently depending on the object
+#Features
+Manage guests, staff, and rooms
+Booking system with auto billing
+Room types: Standard ($80), Deluxe ($150), Suite ($300)
+Loyalty points & checkout system
+File-based data storage
+Tech
 
-How to Run
-1. Clone the repository
-2. Open the project in IntelliJ IDEA
-3. Run Main.java
+#OOP: interfaces, abstraction, inheritance, encapsulation, polymorphism
+
+#How to Run
+
+Open in IntelliJ and run Main.java
